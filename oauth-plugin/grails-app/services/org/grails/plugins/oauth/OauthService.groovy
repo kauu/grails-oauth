@@ -96,6 +96,7 @@ class OauthService implements InitializingBean {
      *			scope = 'http://example.com/data/feed/api/'
      *			consumer.key = 'key'
      *			consumer.secret = 'secret'
+     *			oAuth10a = true
      *		}
      * }
      * 
@@ -107,6 +108,7 @@ class OauthService implements InitializingBean {
      *			accessTokenUrl = 'http://example.com/oauth/access_token'
      *			authUrl = 'http://example.com/oauth/authorize'
      *			scope = 'http://example.com/data/feed/api/'
+     *			oAuth10a = true
      *			consumers {
      *				consumer_name {
      *					key = 'key'
@@ -153,7 +155,7 @@ class OauthService implements InitializingBean {
 
             // Initialise provider config map
             providers[key] = ['requestTokenUrl': requestTokenUrl, 'accessTokenUrl': value?.accessTokenUrl,
-                'authUrl': value?.authUrl]
+                'authUrl': value?.authUrl, 'oAuth10a':value?.oAuth10a]
 	        
 	        if (value?.consumer) {
 	        	/*
@@ -651,8 +653,10 @@ class OauthService implements InitializingBean {
         }
 
         // Initialise new provider
-        return new CommonsHttpOAuthProvider(providerValues.requestTokenUrl,
-            providerValues.accessTokenUrl, providerValues.authUrl, httpClient)
+		def provider = new CommonsHttpOAuthProvider(providerValues.requestTokenUrl,
+			providerValues.accessTokenUrl, providerValues.authUrl, httpClient)
+		provider.setOAuth10a providerValues.oAuth10a
+        return provider 
     }
 
     /**
